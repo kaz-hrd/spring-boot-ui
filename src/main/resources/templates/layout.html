@@ -11,11 +11,30 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}">    
     <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            padding-top: 72px; /* ナビゲーションバーの高さ分のパディング */
+            padding-bottom: 80px; /* フッターの高さ分のパディング */
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1030; /* Bootstrapの標準的なnavbarのz-index */
+        }
         .navbar-brand {
             font-weight: bold;
         }
         .main-content {
             padding-top: 2rem;
+            padding-bottom: 60px;
+            flex: 1 0 auto;
         }
         .table-responsive {
             border-radius: 0.375rem;
@@ -37,6 +56,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+            height: 80px; /* フッターの高さを固定 */
+            display: flex;
+            align-items: center;
         }
     </style>
 </head>
@@ -111,9 +141,9 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-light text-center text-muted py-4 mt-5">
+    <footer class="bg-light text-center text-muted">
         <div class="container">
-            <p>&copy; 2025 Spring Boot Sample Application</p>
+            <p class="mb-0">&copy; 2025 Spring Boot Sample Application</p>
         </div>
     </footer>
 
