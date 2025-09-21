@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"  th:replace="~{layout :: layout(~{::title},~{::body/content()})}">
+<head>
+    <title>ユーザー一覧 - Spring Boot Sample</title>
+</head>
+<body>
+    <div class="container main-content">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h2 mb-1">
+                            <i class="bi bi-people-fill"></i> ユーザー一覧
+                        </h1>
+                        <p class="text-muted">登録されているユーザーの一覧を表示しています</p>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> 新規追加
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" th:text="${#lists.size(users)}">0</h4>
+                                <p class="card-text">総ユーザー数</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-people" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" th:text="${#lists.size(users.?[role == 'エンジニア' or role == 'シニアエンジニア' or role == 'テックリード'])}">0</h4>
+                                <p class="card-text">開発者</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-code-slash" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" th:text="${#lists.size(users.?[role == 'マネージャー'])}">0</h4>
+                                <p class="card-text">マネージャー</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-person-badge" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" th:text="${#sets.size(#sets.toSet(users.![department]))}">0</h4>
+                                <p class="card-text">部署数</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-building" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control" placeholder="名前、メール、部署で検索..." id="searchInput">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="departmentFilter">
+                    <option value="">すべての部署</option>
+                    <option value="開発部">開発部</option>
+                    <option value="営業部">営業部</option>
+                    <option value="人事部">人事部</option>
+                    <option value="総務部">総務部</option>
+                    <option value="マーケティング部">マーケティング部</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="roleFilter">
+                    <option value="">すべての役職</option>
+                    <option value="エンジニア">エンジニア</option>
+                    <option value="シニアエンジニア">シニアエンジニア</option>
+                    <option value="テックリード">テックリード</option>
+                    <option value="営業">営業</option>
+                    <option value="マネージャー">マネージャー</option>
+                    <option value="人事">人事</option>
+                    <option value="総務">総務</option>
+                    <option value="マーケター">マーケター</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-table"></i> ユーザー情報
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="usersTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">名前</th>
+                                <th scope="col">メールアドレス</th>
+                                <th scope="col">部署</th>
+                                <th scope="col">役職</th>
+                                <th scope="col">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user, iterStat : ${users}" th:data-department="${user.department}" th:data-role="${user.role}">
+                                <th scope="row" th:text="${user.id}">1</th>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                             style="width: 40px; height: 40px; font-size: 1.2em; font-weight: bold;">
+                                            <span th:text="${#strings.substring(user.name, 0, 1)}">T</span>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold" th:text="${user.name}">田中太郎</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a th:href="'mailto:' + ${user.email}" th:text="${user.email}" class="text-decoration-none">
+                                        tanaka@example.com
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge badge-custom" 
+                                          th:class="${'badge badge-custom ' + 
+                                                    (user.department == '開発部' ? 'bg-success' : 
+                                                     user.department == '営業部' ? 'bg-primary' : 
+                                                     user.department == '人事部' ? 'bg-info' : 
+                                                     user.department == '総務部' ? 'bg-warning text-dark' : 
+                                                     'bg-secondary')}"
+                                          th:text="${user.department}">
+                                        開発部
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark badge-custom" th:text="${user.role}">エンジニア</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-outline-primary btn-sm" 
+                                                title="詳細表示" th:onclick="'viewUser(' + ${user.id} + ')'">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                                title="編集" th:onclick="'editUser(' + ${user.id} + ')'">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                title="削除" th:onclick="'deleteUser(' + ${user.id} + ')'">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- No results message -->
+        <div id="noResults" class="alert alert-info text-center mt-3" style="display: none;">
+            <i class="bi bi-info-circle"></i> 検索条件に一致するユーザーが見つかりませんでした。
+        </div>
+    </div>
+
+    <!-- Additional Scripts -->
+    <script>
+        // Search and filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const departmentFilter = document.getElementById('departmentFilter');
+            const roleFilter = document.getElementById('roleFilter');
+            const table = document.getElementById('usersTable');
+            const noResults = document.getElementById('noResults');
+
+            function filterTable() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedDepartment = departmentFilter.value;
+                const selectedRole = roleFilter.value;
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                let visibleRows = 0;
+
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    const name = row.cells[1].textContent.toLowerCase();
+                    const email = row.cells[2].textContent.toLowerCase();
+                    const department = row.getAttribute('data-department');
+                    const role = row.getAttribute('data-role');
+
+                    const matchesSearch = name.includes(searchTerm) || 
+                                        email.includes(searchTerm) || 
+                                        department.toLowerCase().includes(searchTerm);
+                    const matchesDepartment = !selectedDepartment || department === selectedDepartment;
+                    const matchesRole = !selectedRole || role === selectedRole;
+
+                    if (matchesSearch && matchesDepartment && matchesRole) {
+                        row.style.display = '';
+                        visibleRows++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+
+                // Show/hide no results message
+                if (visibleRows === 0) {
+                    noResults.style.display = 'block';
+                } else {
+                    noResults.style.display = 'none';
+                }
+            }
+
+            searchInput.addEventListener('keyup', filterTable);
+            departmentFilter.addEventListener('change', filterTable);
+            roleFilter.addEventListener('change', filterTable);
+        });
+
+        // Action functions (placeholder implementations)
+        function viewUser(id) {
+            alert('ユーザー詳細表示: ID ' + id);
+        }
+
+        function editUser(id) {
+            alert('ユーザー編集: ID ' + id);
+        }
+
+        function deleteUser(id) {
+            if (confirm('ユーザーを削除しますか？ ID: ' + id)) {
+                alert('ユーザー削除: ID ' + id);
+            }
+        }
+    </script>
+
+</body>
+</html>
