@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+
+<head>
+    <title>ユーザー登録 - Spring Boot Sample</title>
+</head>
+<body>
+    <div id="content">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="bi bi-person-plus me-2"></i>ユーザー登録
+                        </h4>
+                    </div>
+                    <div class="card-body">
+
+                        <form th:action="@{/register}" th:object="${userForm}" method="post" novalidate>
+                            <!-- エラーメッセージ表示 -->
+                            <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <li th:each="error : ${#fields.globalErrors()}" th:text="${error}"></li>
+                                </ul>
+                            </div>
+
+                            <div class="row">
+                                <!-- 名前 -->
+                                <div class="col-md-12 mb-3">
+                                    <label for="name" class="form-label">
+                                        <i class="bi bi-person me-1"></i>名前 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" th:field="*{name}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                                           id="name" placeholder="山田太郎">
+                                    <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback">
+                                        <span th:errors="*{name}"></span>
+                                    </div>
+                                </div>
+
+                                <!-- メールアドレス -->
+                                <div class="col-md-12 mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="bi bi-envelope me-1"></i>メールアドレス <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" th:field="*{email}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                           id="email" placeholder="example@example.com">
+                                    <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                                        <span th:errors="*{email}"></span>
+                                    </div>
+                                </div>
+
+                                <!-- パスワード -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label">
+                                        <i class="bi bi-lock me-1"></i>パスワード <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="password" th:field="*{password}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
+                                           id="password" placeholder="8文字以上">
+                                    <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback">
+                                        <span th:errors="*{password}"></span>
+                                    </div>
+                                </div>
+
+                                <!-- パスワード確認 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="confirmPassword" class="form-label">
+                                        <i class="bi bi-lock-fill me-1"></i>パスワード確認 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="password" th:field="*{confirmPassword}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
+                                           id="confirmPassword" placeholder="パスワードを再入力">
+                                    <div th:if="${#fields.hasErrors('confirmPassword')}" class="invalid-feedback">
+                                        <span th:errors="*{confirmPassword}"></span>
+                                    </div>
+                                </div>
+
+                                <!-- 部署 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="department" class="form-label">
+                                        <i class="bi bi-building me-1"></i>部署
+                                    </label>
+                                    <select th:field="*{department}" class="form-select"
+                                            th:classappend="${#fields.hasErrors('department')} ? 'is-invalid' : ''"
+                                            id="department">
+                                        <option value="">-- 選択してください --</option>
+                                        <option th:each="dept : ${departments}" 
+                                                th:value="${dept}" 
+                                                th:text="${dept}"></option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('department')}" class="invalid-feedback">
+                                        <span th:errors="*{department}"></span>
+                                    </div>
+                                </div>
+
+                                <!-- 権限 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="role" class="form-label">
+                                        <i class="bi bi-shield me-1"></i>権限
+                                    </label>
+                                    <select th:field="*{role}" class="form-select"
+                                            th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''"
+                                            id="role">
+                                        <option th:each="roleOption : ${roles}" 
+                                                th:value="${roleOption}" 
+                                                th:text="${roleOption == 'USER' ? 'ユーザー' : (roleOption == 'MANAGER' ? 'マネージャー' : '管理者')}"
+                                                th:selected="${roleOption == 'USER'}"></option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('role')}" class="invalid-feedback">
+                                        <span th:errors="*{role}"></span>
+                                    </div>
+                                </div>
+
+                                <!-- 電話番号 -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">
+                                        <i class="bi bi-telephone me-1"></i>電話番号
+                                    </label>
+                                    <input type="tel" th:field="*{phone}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''"
+                                           id="phone" placeholder="090-1234-5678">
+                                    <div th:if="${#fields.hasErrors('phone')}" class="invalid-feedback">
+                                        <span th:errors="*{phone}"></span>
+                                    </div>
+                                </div>
+
+                                <!-- 備考 -->
+                                <div class="col-md-12 mb-3">
+                                    <label for="notes" class="form-label">
+                                        <i class="bi bi-textarea-t me-1"></i>備考
+                                    </label>
+                                    <textarea th:field="*{notes}" class="form-control"
+                                              th:classappend="${#fields.hasErrors('notes')} ? 'is-invalid' : ''"
+                                              id="notes" rows="3" placeholder="その他特記事項があれば記入してください"></textarea>
+                                    <div th:if="${#fields.hasErrors('notes')}" class="invalid-feedback">
+                                        <span th:errors="*{notes}"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ボタン -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a th:href="@{/users}" class="btn btn-secondary me-md-2">
+                                    <i class="bi bi-arrow-left me-1"></i>キャンセル
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-person-check me-1"></i>登録
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // パスワード一致チェック
+        document.addEventListener('DOMContentLoaded', function() {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            function checkPasswordMatch() {
+                if (password.value && confirmPassword.value) {
+                    if (password.value === confirmPassword.value) {
+                        confirmPassword.classList.remove('is-invalid');
+                        confirmPassword.classList.add('is-valid');
+                    } else {
+                        confirmPassword.classList.remove('is-valid');
+                        confirmPassword.classList.add('is-invalid');
+                    }
+                } else {
+                    confirmPassword.classList.remove('is-valid', 'is-invalid');
+                }
+            }
+            
+            password.addEventListener('input', checkPasswordMatch);
+            confirmPassword.addEventListener('input', checkPasswordMatch);
+        });
+    </script>
+</body>
+</html>

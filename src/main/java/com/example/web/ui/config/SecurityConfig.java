@@ -29,6 +29,8 @@ public class SecurityConfig {
                     "/css/**", "/js/**", "/webjars/**", "/images/**",
                     "/actuator/health", "/actuator/info"
                 ).permitAll()
+                // ユーザー登録ページは認証後にアクセス可能
+                .requestMatchers("/register/**").authenticated()
                 // 管理者専用エンドポイント
                 .requestMatchers("/admin/**", "/actuator/**").hasRole("ADMIN")
                 // その他は認証必須
